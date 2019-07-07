@@ -1,0 +1,114 @@
+---
+title: "Heat In My Neighborhood"
+output:
+  html_document:
+    df_print: paged
+---
+
+This is a test model to calculate the ambient temperatures in different parts of an urban area. As a show case and proof of concept, in the first step it uses data from use [AoT network data](http://arrayofthings.github.io/) to build a Machine Learning train/test model. AoT project is expected to grow to [other cities](https://aot-file-browser.plenar.io/data-sets) throughouth the U.S., thereofre the model can be better generalized in a year with data available for at least 9 other urban areas. 
+
+The predicted temperatures can help Urban Planners, City Officials, healthcare providers and other related institutions to have a district level map of temperatures changes inside a city, therefore planning for the related matters, such as heatwave adaptation and mitigation plans.
+
+## The Approach
+The problem can be broken down into two problems as follow:
+
+### 1) A predictive model for calculating ambient temperature
+A Machine Learning algorithm (ML) considering different potential features in predicting the ambient temperature. Currently, these features are considered for training and testing the model:
+
+* Ambient temperatures form AoT network. (The predicted variable)
+* Land Surface Temperature (LST): to be calculated from Remote Sensing data. (30m x 30m resolution)
+* Population: Can be extracted from [American Community Survey - ACS  Data](https://www.census.gov/programs-surveys/acs/data.html). (Census Block Group level)
+* Daytime population from ACS data. (Census Block Group level)
+* Percent of imprevious from [National Land Cover Database](https://www.mrlc.gov/)
+* Lancover Type from [National Land Cover Database](https://www.mrlc.gov/)
+
+### 2) A downscaling model for daily LST values 
+One problem is that the available remote sensing data for LST (from LandSat) in 30x30m resolution are available in 16 days time periods. Therefore a model created based on this data is not trustworthy. On ther hand other there are daily remote sensing data that can be used for calculating LST but usually in coarser spacial reolution (MODIS in 1 km resolution). A deep learning model is suggested to be trained from timely overlapped datasets of both remote sensing and to scale down the 1 km LST into 30x30m resolution. The model will be trained and validated from the overlapped (16 days data) parts and then be used to change 1x1 km resolution daily LST values into 30x30 m  values for the study period. 
+The suggested method is to do [Transfer Learning](http://cs231n.github.io/transfer-learning/) on a [pre-trained deep learning model](https://arxiv.org/abs/1703.03126) by the previous Ph.D. candidate at SDS lab, [Thoms J.Vandal](http://www1.coe.neu.edu/~tvandal/).  
+
+The final product will be a web-app that user (an urban planner, a healthcare provider, or anyone who is interested about ambient temperature highs in the city) can click a point insidet the city and receive predictions about the ambient temperature changes in that part, and a comparison to other places of the city. The initial model will focus to the city of Chicago, as explianed below.
+
+# Proof of Concept
+Following shows a sample of a prective model for the ambient temperature in different parts of the city
+Start by looking into the location of nodes throughout Chicago
+```{r}
+library(sp) #spatial data wrangling & analysis
+
+library(rgdal) #spatial data wrangling
+library(rgeos) #spatial data wrangling & analytics
+library(tidyverse) # data wrangling
+
+#Getting the data of nodes
+load("nodes.rda")
+```
+
+Now Getting the total population in each Census Block Group based on ACS-2016 5-year estimate
+
+```{r}
+library(tidycensus)
+library(tidyverse)
+library(sf)
+
+load("ACS_population.rda")
+```
+
+## Mapping Nodes on Block Groups
+Here there is a basic map showing the locations of nodes and the Census Block Groups
+```{r}
+library(mapview)
+library(RColorBrewer)
+
+# Blocks
+m1 <- mapview(chicago)
+
+# nodes
+m2 <- mapview(nodes.spt, size=5, legend=FALSE, color="red", popup=popupTable(nodes.spt, zcol = c("address", "node_id")))
+
+m1+m2
+```
+
+It's look like the available nodes do not cover all the Census Block. To reduce the area of study, I’ll add Chicago community areas as a layer. 
+
+```{r}
+# First to remove the outlier node!
+outlier.index <- which.min(nodes.spt$lon)
+nodes.spt <- nodes.spt[-outlier.index,]
+Stations <- Stations[-outlier.index,]
+temp.daily <- temp.daily[,,-outlier.index]
+
+
+# Now to eliminate BGs outside the containing box
+this.area <-st_sfc(st_polygon(list(rbind(c(min(nodes.spt$lon), min(nodes.spt$lat)),
+                             c(max(nodes.spt$lon), min(nodes.spt$lat)),
+                             c(max(nodes.spt$lon), max(nodes.spt$lat)),
+                             c(min(nodes.spt$lon), max(nodes.spt$lat)),
+                             c(min(nodes.spt$lon), min(nodes.spt$lat)))))) %>% st_sf(relation_to_geometry = NA_character_)
+
+st_crs(this.area) <- st_crs(chicago)
+#st_crs(this.area) <- "+proj=longlat +datum=NAD83 +no_defs"
+new_chicago <- st_intersection(this.area, chicago)
+m2 <- mapview(nodes.spt, size=5, legend=FALSE, color="red", popup=popupTable(nodes.spt, zcol = c("address", "node_id")))
+
+m3 <- mapview(new_chicago)
+m2 + m3
+```
+## Getting LandSat 8 data and calculate Land Surface Temperature (LST)
+The Landsat is a multispectral satellite currently on the eighth of it's series. Landsat-8 data is freely available on the USGS's Earth Explorer website. All we need to do is sign up and find a scene that match our area of study. The notation used to catalog Landsat-8 images is called [Worldwide Reference System 2 (WRS-2)](https://landsat.usgs.gov/what-worldwide-reference-system-wrs). The Landsat follows the same paths imaging the earth every 16 days. Each path is split into multiple rows. So, each scene has a path and a row. 16 days later, another scene will have the same path and row than the previous scene. This is the essence of the WRS-2 system.
+
+USGS provides [Shape files](https://landsat.usgs.gov/pathrow-shapefiles) of these paths and rows that let us quickly visualize, interact and select the important images. After checking the shape file of Landsat 4-8, WRS-2, I found that city of Chicago is within Path 23 and row 31. ( or can use a converter to find Path and Row from latitude and longitude).
+
+at this time I used GloVis tool to download 6 images of Landsat 8 OLI/TIRS C1 Level-1. Then to test the model and for the proof of concept I am just adding one layer (band 6) of downloaded LandSat GeoTiff Image.
+```{r}
+source("LandSat_band6.R")
+mapviewOptions(mapview.maxpixels = 5e+05)
+m4 <- mapview(landsat, legend=FALSE)
+
+m4+m2+m3
+```
+
+We need to crop the raster part to match the area of study:
+```{r}
+# landsat <- crop(landsat, new_chicago)
+```
+
+

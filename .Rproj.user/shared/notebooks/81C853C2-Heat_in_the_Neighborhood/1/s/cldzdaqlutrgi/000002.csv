@@ -1,0 +1,12 @@
+"0","source(""LandSat_band6.R"")"
+"0","mapviewOptions(mapview.maxpixels = 5e+05)"
+"0","m4 <- mapview(landsat, legend=FALSE)"
+"2","maximum number of pixels for Raster* viewing is 5e+05 ; 
+the supplied Raster* has 62343791 
+ ... decreasing Raster* resolution to 5e+05 pixels
+ to view full resolution set 'maxpixels =  62343791 '"
+"2","no non-missing arguments to min; returning Inf"
+"2","no non-missing arguments to max; returning -Inf"
+"2","no non-missing arguments to min; returning Inf"
+"2","no non-missing arguments to max; returning -Inf"
+"0","m4+m2+m3"

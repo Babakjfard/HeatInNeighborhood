@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1562532481276.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "7217E086",
+    "lastKnownWriteTime" : 1541960564,
+    "last_content_update" : 1541960564,
+    "path" : "~/R/HeatInNeighborhood/rasters_Work.R",
+    "project_path" : "rasters_Work.R",
+    "properties" : {
+        "cursorPosition" : "10,22",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

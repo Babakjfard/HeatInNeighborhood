@@ -1,0 +1,51 @@
+---
+title: "Exploratory Data Analysis"
+output: html_notebook
+---
+
+This is the next step after creating the required dataset for the project. To look into the data, find the anomalies, outliers, Not available values, and prepare it for the modeling
+```{r}
+load("validation_test.rda")
+head(dataset, n=10)
+```
+
+
+* Consider transformation if necessary (normalization or other method)
+Now a summary of the data:
+```{r}
+summary(dataset)
+```
+
+Let's look into Boxplots of comparison of similar variables:
+```{r}
+library(ggplot2)
+library(plotly)
+library(tidyverse)
+
+# tidy the data for visualization
+data.tidy <- dataset[,1:7] %>% gather(key = "parameter", value = "value", -c(lat, lon))
+bxp.tmeps <- ggplot(data.tidy, aes(x=parameter, y=value))+
+  geom_boxplot()+facet_wrap(~parameter, scales = "free_y")
+bxp.tmeps <- ggplotly(bxp.tmeps)
+bxp.tmeps
+```
+
+Looking into the histograms of data
+
+```{r}
+hist.temps <- ggplot(data.tidy, aes(value))+
+  geom_histogram()+facet_wrap(~parameter, scales = "free_x")
+h <- ggplotly(hist.temps)
+h
+```
+
+Now let's take a look into the correlations between the variables
+
+```{r}
+library(corrplot)
+data_to_corr <- dataset[, -c(2,3)]
+data_to_corr$Land_Cover <- as.numeric(data_to_corr$Land_Cover)
+correlations <- cor(data_to_corr)
+corrplot(correlations, method="circle")
+```
+Now should consider feature selection and possibly to remove the most correlated attributes.

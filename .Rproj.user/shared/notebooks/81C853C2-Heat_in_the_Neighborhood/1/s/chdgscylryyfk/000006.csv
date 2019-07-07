@@ -1,0 +1,12 @@
+"0","library(mapview)"
+"0","library(RColorBrewer)"
+"0","cols <- colorRampPalette(brewer.pal(20, ""Reds""))"
+"2","n too large, allowed maximum for palette Reds is 9
+Returning the palette you asked for with that many colors
+"
+"0","# Blocks"
+"0","m1 <- mapview(chicago, z=""estimate"", popup=popupTable(chicago, zcol = c(""estimate"", ""moe"")),"
+"0","              co.regions=cols(40),cex=""estimate"",legend=FALSE)"
+"0","# nodes"
+"0","m2 <- mapview(nodes.spt, size=5, legend=TRUE, color=""red"", color.region=""white"", popup=popupTable(nodes.spt, zcol = c(""address"", ""node_id"")))"
+"0","m1+m2"

@@ -1,0 +1,6 @@
+"0","library(sp) #spatial data wrangling & analysis"
+"0","library(rgdal) #spatial data wrangling"
+"0","library(rgeos) #spatial data wrangling & analytics"
+"0","library(tidyverse) # data wrangling"
+"0","#Getting the data of nodes"
+"0","load(""nodes.rda"")"

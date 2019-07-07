@@ -1,0 +1,4 @@
+"0","hist.temps <- ggplot(data.tidy, aes(value))+"
+"0","  geom_histogram()+facet_wrap(~parameter, scales = ""free_x"")"
+"0","h <- ggplotly(hist.temps)"
+"0","h"

@@ -1,0 +1,24 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1562533329136.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3168854972",
+    "id" : "C8FAD38A",
+    "lastKnownWriteTime" : 1562533484,
+    "last_content_update" : 1562533484381,
+    "path" : "~/R/HeatInNeighborhood/Heat_in_the_Neighborhood.Rmd",
+    "project_path" : "Heat_in_the_Neighborhood.Rmd",
+    "properties" : {
+        "chunk_output_type" : "inline",
+        "cursorPosition" : "52,6",
+        "scrollLine" : "44",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

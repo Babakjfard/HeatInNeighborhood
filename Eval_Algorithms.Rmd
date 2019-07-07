@@ -1,0 +1,29 @@
+---
+title: "Evaluate Algorithms"
+output:
+  html_document:
+    df_print: paged
+---
+
+models are trained and evaluated and are resampled. Here the results are compared
+```{r}
+load("trained_models_I.rda")
+summary(results)
+
+```
+
+and visual comparison:
+```{r}
+dotplot(results)
+```
+
+I have added one ensemble model now (Random Forest). I am going to consider and research about other ensemble models such as XGBoost later.
+
+```{r}
+load("models_I_withensembles.rda")
+summary(results_with_ensembles)
+
+```
+```{r}
+dotplot(results_with_ensembles)
+```

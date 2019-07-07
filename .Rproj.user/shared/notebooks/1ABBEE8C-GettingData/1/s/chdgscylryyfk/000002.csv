@@ -1,0 +1,7 @@
+"0","library(mapview)"
+"0","library(RColorBrewer)"
+"0","# Blocks"
+"0","m1 <- mapview(chicago)"
+"0","# nodes"
+"0","m2 <- mapview(nodes.spt, size=5, legend=FALSE, color=""red"", popup=popupTable(nodes.spt, zcol = c(""address"", ""node_id"")))"
+"0","m1+m2"

@@ -1,0 +1,5 @@
+"0","library(corrplot)"
+"0","data_to_corr <- dataset[, -c(2,3)]"
+"0","data_to_corr$Land_Cover <- as.numeric(data_to_corr$Land_Cover)"
+"0","correlations <- cor(data_to_corr)"
+"0","corrplot(correlations, method=""circle"")"
