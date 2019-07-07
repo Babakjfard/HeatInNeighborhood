@@ -4,7 +4,7 @@ This is an initial attempt to creat a model for predicting the ambient temperatu
 <p align="center">
   <img src="Chicago.png", width="600"/>
   </br>
-  Census Block Groups of Chicago and the placement locations of [Array of Things](https://arrayofthings.github.io/) sensors.
+  Census Block Groups of Chicago and the placement locations of [Array of Things](https://arrayofthings.github.io) sensors.
 </p>
 
 * More can be found [here](https://raw.githack.com/Babakjfard/HeatInNeighborhood/master/Heat_in_the_Neighborhood.html)
